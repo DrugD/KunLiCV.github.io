@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>🏠 Kun Li</title>
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico" />
+
+    <!-- JS scripts -->
+    <script src="js/connection.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/themes.js"></script>
+
+    <!-- CSS style sheets -->
+    <link rel="stylesheet" href="css/colors.css" />
+    <link rel="stylesheet" href="css/page.css" />
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/annotation.css" />
+    <link rel="stylesheet" href="css/publications.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Philosopher', serif;
+            background-color: var(--bg-color, #fff);
+            color: var(--text-color, #222);
+        }
+
+        .navbar {
+            background-color: var(--nav-bg, #222);
+            padding: 0.5rem 1rem;
+            display: flex;
+            gap: 1rem;
+            color: white;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        .lang-toggle {
+            margin-left: auto;
+            cursor: pointer;
+            font-weight: 700;
+            color: #ffcc00;
+            user-select: none;
+        }
+
+        main.content-wrapper {
+            max-width: 960px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* 主页简介区域，图片+文字左右排列，垂直居中 */
+        .profile-section {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            min-height: 200px;
+        }
+
+        .profile-photo {
+            flex-shrink: 0;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--nav-bg, #222);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-text {
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .profile-text h1 {
+            margin: 0 0 0.3rem 0;
+            font-weight: 700;
+            font-size: 2.2rem;
+        }
+
+        .profile-text h1 small {
+            font-weight: normal;
+            font-size: 0.8rem;
+            color: #666;
+            margin-left: 0.5rem;
+        }
+
+        .profile-text p {
+            margin: 0.2rem 0;
+            font-size: 1rem;
+        }
+
+        /* 论文列表 */
+        .publications-section,
+        .projects-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--nav-bg, #222);
+            padding-bottom: 0.3rem;
+        }
+
+        /* 论文条目 */
+        .pub-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+            align-items: flex-start;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 1rem;
+        }
+
+        .pub-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .pub-image {
+            width: 120px;
+            height: 90px;
+            flex-shrink: 0;
+            border-radius: 6px;
+            object-fit: cover;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .pub-details {
+            flex: 1;
+        }
+
+        .pub-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .pub-meta {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .pub-links a {
+            margin-right: 1rem;
+            text-decoration: none;
+            color: var(--nav-bg, #222);
+            font-weight: 600;
+            border: 1px solid var(--nav-bg, #222);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .pub-links a:hover {
+            background-color: var(--nav-bg, #222);
+            color: #fff;
+        }
+
+        /* 项目列表 */
+        .projects-section ul {
+            list-style: disc inside;
+            padding-left: 0;
+            margin-top: 0.5rem;
+        }
+
+        .projects-section li {
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+
+        /* 中英文切换隐藏 */
+        .zh,
+        .en {
+            display: none;
+        }
+
+        body.lang-zh .zh {
+            display: inline;
+        }
+
+        body.lang-zh .en {
+            display: none;
+        }
+
+        body.lang-en .en {
+            display: inline;
+        }
+
+        body.lang-en .zh {
+            display: none;
+        }
+
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .profile-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-text {
+                min-width: auto;
+            }
+
+            .pub-item {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pub-image {
+                width: 100%;
+                height: auto;
+                max-height: 180px;
+            }
+
+            .pub-details {
+                width: 100%;
+            }
+
+            .pub-links a {
+                margin-bottom: 0.5rem;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+
+<body class="theme-iro-silent lang-zh">
+
+    <div class="navbar">
+        <a href="#" onclick="scrollToSection('home')"><span class="zh">主页</span><span class="en">Home</span></a>
+        <a href="#" onclick="scrollToSection('publications')"><span class="zh">论文</span><span
+                class="en">Publications</span></a>
+        <a href="#" onclick="scrollToSection('projects')"><span class="zh">项目</span><span class="en">Projects</span></a>
+        <span class="lang-toggle" onclick="toggleLang()">English</span>
+    </div>
+
+    <main class="content-wrapper" id="content-main">
+
+        <!-- 主页 -->
+        <section id="home" class="profile-section">
+            <img src="likun.png" alt="Kun Li" class="profile-photo" />
+            <div class="profile-text">
+                <h1>Kun Li <small>(李 坤)</small></h1>
+                <p><strong class="en">Affiliation:</strong><strong class="zh">单位：</strong> Wuhan University / 武汉大学</p>
+                <p><strong class="en">Research Areas:</strong><strong class="zh">研究方向：</strong> Drug Discovery, Graph
+                    Computing / 药物发现，图计算</p>
+                <p><strong class="en">Email:</strong><strong class="zh">邮箱：</strong>
+                    <a href="mailto:your_email@whu.edu.cn">likun98@whu.edu.cn</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- 论文 -->
+        <section id="publications" class="publications-section">
+            <h2 class="section-title"><span class="zh">发表论文</span><span class="en">Publications (6)</span></h2>
+
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Contrastive learning-based drug screening model for GluN1/GluN3A
+                            inhibitors</span>
+                        <span class="zh">基于对比学习的GluN1/GluN3A抑制剂药物筛选模型</span>
+                    </div>
+                    <div class="pub-meta">
+                        <a style="color:red">Kun Li</a>, Yue Zeng, Yi-da Xiong, Hao-chen Wu, Sui Fang, Zhi-yan Qu, Yan
+                        Zhu*, Bo Du*, Zhao-bing Gao*,
+                        Wen-bin Hu* - Acta Pharmacologica Sinica 2025 - 0 citations
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Small Molecule Drug Discovery Through Deep Learning: Progress, Challenges, and
+                            Opportunities</span>
+                        <span class="zh">深度学习在小分子药物发现中的进展、挑战与机遇</span>
+                    </div>
+                    <div class="pub-meta">
+                        <a style="color:red">Kun Li</a>, Yida Xiong, Hongzhi Zhang, Xiantao Cai, Bo Du, Wenbin Hu* -
+                        ICWS 2025 - 0 citations
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 1" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Contrastive learning drug response models from natural language
+                            Supervision</span>
+                        <span class="zh">基于自然语言监督的对比学习药物反应模型</span>
+                    </div>
+                    <div class="pub-meta">
+                        <a style="color:red">Kun Li</a>, Xiuwen Gong, Jia Wu, Wenbin Hu* - IJCAI 2024 - 7 citations
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/xxxx.xxxx" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Zero-shot learning for preclinical drug screening</span>
+                        <span class="zh">用于临床前药物筛选的零样本学习</span>
+                    </div>
+                    <div class="pub-meta">
+                        <a style="color:red">Kun Li</a>, W Liu, Y Luo, X Cai, J Wu, W Hu* - IJCAI 2024 - 6 citations
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Collaborative Drug Design Based on A Drug-Drug Interaction-Guided Diffusion
+                            Model</span>
+                        <span class="zh">用于临床前药物筛选的零样本学习</span>
+                    </div>
+                    <div class="pub-meta">
+                        C Hu, <a style="color:red">Kun Li</a>, L Hu, Y Xiong, X Cai, W Hu* - IJCAI 2024 - 0 citations
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Research Journey of Generative Protein Modeling</span>
+                        <span class="zh">用于临床前药物筛选的零样本学习</span>
+                    </div>
+                    <div class="pub-meta">
+                        Xinhui Chen, Yiwen Yuan, Joseph Liu, Chak Tou Leong, Zhen Xie, Xiaoye Zhu, Ying Chen, Songyue
+                        Chen, Chenyi Wang, <a style="color:red">Kun Li</a>, Jie Zhang, Zuchao Li, Jiaqi Chen* - NIPS,
+                        WorkShop, Advancements In
+                        Medical Foundation Models: Explainability, Robustness, Security, and Beyond 2024 - 0 citations
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+
+
+        </section>
+
+
+
+        <!-- 论文 -->
+        <section id="publications" class="publications-section">
+            <h2 class="section-title"><span class="zh">预印论文</span><span class="en">Arxiv Publications (6)</span></h2>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">DrugPilot: LLM-based Parameterized Reasoning Agent for Drug Discovery</span>
+                        <span class="zh">用于临床前药物筛选的零样本学习</span>
+                    </div>
+                    <div class="pub-meta">
+                        <a style="color:red">Kun Li</a>, Z Wu, S Wang, W Hu* / 2025
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Can Molecular Evolution Mechanism Enhance Molecular Representation?</span>
+                        <span class="zh">用于临床前药物筛选的零样本学习</span>
+                    </div>
+                    <div class="pub-meta">
+                        <a style="color:red">Kun Li</a>, L Hu, X Cai, J Wu, W Hu* / 2025
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Text-guided multi-property molecular optimization with a diffusion language
+                            model</span>
+                        <span class="zh">用于临床前药物筛选的零样本学习</span>
+                    </div>
+                    <div class="pub-meta">
+                        Y Xiong, <a style="color:red">Kun Li</a>, J Chen, H Zhang, D Lin, Y Che, W Hu* / 2024
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Fragment-Masked Diffusion for Molecular Optimization</span>
+                        <span class="zh">用于临床前药物筛选的零样本学习</span>
+                    </div>
+                    <div class="pub-meta">
+                        <a style="color:red">Kun Li</a>, X Cai, J Wu, S Pan, H Xu, B Du, W Hu* / 2024
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">Regressor-free Molecule Generation to Support Drug Response Prediction</span>
+                        <span class="zh">用于临床前药物筛选的零样本学习</span>
+                    </div>
+                    <div class="pub-meta">
+                        <a style="color:red">Kun Li</a>, X Gong, S Pan, J Wu, B Du, W Hu* / 2024
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/yyyy.yyyy" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pub-item">
+                <img src="APS.png" alt="Paper 2" class="pub-image" />
+                <div class="pub-details">
+                    <div class="pub-title">
+                        <span class="en">AUG: A New Dataset and An Efficient Model for Aerial Image Urban Scene Graph
+                            Generation</span>
+                        <span class="zh">用于临床前药物筛选的零样本学习</span>
+                    </div>
+                    <div class="pub-meta">
+                        Y Li*, <a style="color:red">Kun Li</a>, Y Zhang, L Wang, D Zhang / 2024
+                    </div>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/abs/2404.07788" target="_blank" rel="noopener noreferrer">arXiv</a>
+                        <a href="https://drugd.github.io/AUGDataset.github.io/" target="_blank"
+                            rel="noopener noreferrer">GitHub</a>
+                    </div>
+                </div>
+            </article>
+
+
+
+        </section>
+
+
+
+        <!-- 项目 -->
+        <section id="projects" class="projects-section">
+            <h2 class="section-title"><span class="zh">项目</span><span class="en">Projects</span></h2>
+            <ul>
+                <li><strong>毛泽东生平事迹可视化平台</strong> — <span class="zh"><a href="https://drugd.github.io/mzd.github.io/"
+                            target="_blank" rel="noopener noreferrer">GitHub</a></span><a
+                        href="https://drugd.github.io/mzd.github.io/" target="_blank"
+                        rel="noopener noreferrer">GitHub</a></li>
+                <li><strong>BSL Platform, 百生来（深度学习驱动端对端平台平台）</strong> — <span class="zh"><a
+                            href="https://www.baishenglai.com/" target="_blank"
+                            rel="noopener noreferrer">WebSite</a></span><a href="https://www.baishenglai.com/"
+                        target="_blank" rel="noopener noreferrer">WebSite</a></li>
+                <li><strong>DrugPilot Platform, 药启先驱（大模型驱动端对端平台）</strong> — <span class="zh"><a
+                            href="http://www.drugpolit.com/" target="_blank"
+                            rel="noopener noreferrer">WebSite</a></span><a href="http://www.drugpolit.com/"
+                        target="_blank" rel="noopener noreferrer">WebSite</a></li>
+            </ul>
+        </section>
+
+
+        <!-- 项目 -->
+        <section id="projects" class="projects-section">
+            <h2 class="section-title"><span class="zh">其他</span><span class="en">Others</span></h2>
+            <ul>
+                <li><strong>WeChat</strong> — <span class="zh">gulouguawen42</span><span class="en">gulouguawen42</span>
+                </li>
+            </ul>
+
+            <ul>
+                <div style="height: 10pt;"></div>
+            </ul>
+        </section>
+
+    </main>
+
+    <script>
+        // 语言切换逻辑
+        function toggleLang() {
+            const body = document.body;
+            if (body.classList.contains('lang-zh')) {
+                body.classList.remove('lang-zh');
+                body.classList.add('lang-en');
+                document.querySelector('.lang-toggle').textContent = '中文';
+            } else {
+                body.classList.remove('lang-en');
+                body.classList.add('lang-zh');
+                document.querySelector('.lang-toggle').textContent = 'English';
+            }
+        }
+
+        // 导航平滑滚动到对应部分
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 页面默认语言为中文
+        window.onload = () => {
+            document.body.classList.add('lang-en');
+        };
+    </script>
+</body>
+
+</html>
